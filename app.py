@@ -5,18 +5,19 @@ import numpy as np
 from PIL import Image
 import io
 import os
-import subprocess
+import requests
 
 app = Flask(__name__)
 
-# Kaggle dataset details
-dataset = 'mataajohn/cassava_disease_detection'
-model_file = 'Cassava_Disease_Model.h5'
+# Direct link to the model file on Kaggle
+model_url = 'https://www.kaggle.com/models/mataajohn/cassava_disease_detection/download/model.h5'
 model_path = 'Cassava_Disease_Model.h5'
 
 # Download the model if it does not exist
 if not os.path.exists(model_path):
-    subprocess.run(['kaggle', 'datasets', 'download', '-d', dataset, '-p', '.', '--unzip'])
+    response = requests.get(model_url)
+    with open(model_path, 'wb') as f:
+        f.write(response.content)
 
 # Load your .h5 model
 model = load_model(model_path)
